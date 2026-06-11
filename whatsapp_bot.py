@@ -1,6 +1,6 @@
 from playwright.sync_api import sync_playwright
 from langchain_groq import ChatGroq
-from config_loader import get_api_key
+from config_loader import get_api_key,get_whatsapp_contact,reload_config
 import os 
 from stats_manager import add_whatsapp_message
 from dotenv import load_dotenv
@@ -13,7 +13,6 @@ def get_llm():
         api_key=get_api_key()
     )
 
-llm = get_llm()
 
 def reply_new_message(stop_whatsapp,headless):
     with sync_playwright() as p:
@@ -32,8 +31,8 @@ def reply_new_message(stop_whatsapp,headless):
         page.goto("https://web.whatsapp.com")
 
         last_seen_per_chat = {}  # { chat_index: last_message_text }
-        while True:
-        # while not stop_whatsapp.is_set():
+        # while True:
+        while not stop_whatsapp.is_set():
             unread_chats = page.locator("span[data-testid='icon-unread-count']")
             while unread_chats.count() > 0:
                 unread_chats.first.locator("..").click()
@@ -97,6 +96,8 @@ def reply_new_message(stop_whatsapp,headless):
                 conversation = "\n".join(f"- {t}" for t in unread_texts)
                 print(conversation)
 
+                llm = get_llm()
+
                 reply = llm.invoke(f"""
 You are a friendly human chatting on WhatsApp.
 
@@ -119,11 +120,13 @@ Latest message:
 
 Reply naturally to the latest message only.
 """)
+                reload_config()
+                contact_name = get_whatsapp_contact()
 
                 reply = reply.content
                 page.locator("div[data-testid='conversation-compose-box-input']").fill(reply)
                 page.locator("button[aria-label='Send']").click()
                 add_whatsapp_message(chat_name,reply)
-                page.locator("span[title='Reserve Bank of India']").click()
+                page.locator(f"span[title='{contact_name}']").click()
                 page.wait_for_timeout(10000)
 

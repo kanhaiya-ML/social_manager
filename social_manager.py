@@ -385,7 +385,36 @@ def show_whatsapp_page():
         width=600,
         height=250
     )
-    
+
+    ctk.CTkLabel(
+        content_frame,
+        text="Contact Name"
+    ).pack(pady=(10, 5))
+
+    contact_name_entry = ctk.CTkEntry(
+        content_frame,
+        width=300,
+        placeholder_text="Enter contact name (chat which you don't use e.g: any bot chat)"
+    )
+    contact_name_entry.pack(pady=5)
+
+    def save_contact_name():
+        config_data = {}
+        if os.path.exists("config.json"):
+            with open("config.json", "r") as f:
+                config_data = json.load(f)
+        
+        config_data["contact_name"] = contact_name_entry.get()
+        
+        with open("config.json", "w") as f:
+            json.dump(config_data, f, indent=4)
+
+    ctk.CTkButton(
+        content_frame,
+        text="Save Contact",
+        command=save_contact_name
+    ).pack(pady=5)
+
 
     textbox.pack(pady=10)
 
@@ -504,6 +533,36 @@ def show_dm_page():
         fg_color="red",
         hover_color="dark red"
     ).pack(side="left", padx=5)
+
+
+    ctk.CTkLabel(
+        content_frame,
+        text="Contact Name"
+    ).pack(pady=(10, 5))
+
+    contact_name_entry = ctk.CTkEntry(
+        content_frame,
+        width=300,
+        placeholder_text="Enter contact name (which is not usable chat)"
+    )
+    contact_name_entry.pack(pady=5)
+
+    def save_contact_name():
+        config_data = {}
+        if os.path.exists("config.json"):
+            with open("config.json", "r") as f:
+                config_data = json.load(f)
+        
+        config_data["contact_name"] = contact_name_entry.get()
+        
+        with open("config.json", "w") as f:
+            json.dump(config_data, f, indent=4)
+
+    ctk.CTkButton(
+        content_frame,
+        text="Save Contact",
+        command=save_contact_name
+    ).pack(pady=5)
 
 
 # =========================

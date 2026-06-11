@@ -3,7 +3,7 @@ from langchain_groq import ChatGroq
 from stats_manager import update_dm_stats
 import asyncio
 import os
-from config_loader import get_api_key,get_username,get_password
+from config_loader import get_api_key,get_username,get_password,get_insta_contact,reload_config
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -13,7 +13,7 @@ def get_llm():
         api_key=get_api_key()
     )
 
-llm = get_llm()
+
 username = get_username()
 password = get_password()
 
@@ -77,6 +77,7 @@ async def check_and_reply_dms(stop_dms,headless):
 
             # if message in last_seen_message:
             #     continue
+            llm = get_llm()
             reply = llm.invoke(f"""You are a friendly person chatting on instagram.
                 Reply naturally in the same language as the message - English or Hinglish.
                 Keep reply short like a real instagram message.
@@ -86,12 +87,15 @@ async def check_and_reply_dms(stop_dms,headless):
             # print("Unread count:", count)
             # print("Message:", message)
 
+            reload_config()
+            contact_name = get_insta_contact()
+
             await page.locator("div[aria-placeholder='Message...']").fill(reply)
             await page.locator("svg[aria-label='Send']").click()
             update_dm_stats("Instagram User", reply)
             await page.wait_for_timeout(2000)            
 
-            await page.locator("span[title='Shubham Tomar']").click()
+            await page.locator(f"span[title='{contact_name}']").click()
             # if switch_chat.count() > 0:
             #     await switch_chat.click()
             #     print(switch_chat.count())

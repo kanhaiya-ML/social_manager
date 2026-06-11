@@ -34,3 +34,9 @@ def get_username():
 
 def get_password():
     return _load_config().get("password","")
+
+def get_whatsapp_contact():
+    return _load_config().get("whatsapp_contact_name","")
+
+def get_insta_contact():
+    return _load_config().get("insta_contact_name","")
