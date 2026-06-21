@@ -1,5 +1,5 @@
 # Social Manager
-
+## THIS IS DEPRICATED I'll AGAIN START WORK ON THIS AFTER FINISHING MY INTERNSHIP
 ## Overview
 This Project is a made to automate your chatings on whatsapp and instagram. this work in background and reply all your messages on both platforms and run until
 You won't stop from UI.
